@@ -1,205 +1,272 @@
-
-<h2 class="sr-only">2026년 5월~12월 선생님 공유 일정표.</h2>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>선생님 공유 일정표 2026</title>
 <style>
-#month-tabs button{font-size:13px;min-width:52px;padding:5px 10px;}
-#month-tabs button.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);}
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;}
-.dow-hd{text-align:center;font-size:12px;font-weight:500;padding:6px 0;color:var(--color-text-secondary);}
-.dow-hd.weekend{color:#e24b4a;}
-.day-cell{min-height:96px;background:var(--color-background-primary);border:1.5px solid #aaaaaa;border-radius:var(--border-radius-md);padding:7px 8px;cursor:pointer;transition:background 0.1s;}
-.day-cell:hover{background:var(--color-background-secondary);border-color:#888888;}
-.day-cell.sel{background:var(--color-background-info)!important;border-color:var(--color-border-info);border-width:2px;}
-.day-cell.today{border-color:#e24b4a;border-width:2px;}
-.day-cell.today .dnum{background:var(--color-background-danger);color:#e24b4a;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
-.dnum{font-size:13px;font-weight:500;margin-bottom:5px;line-height:1.2;}
-.dnum.weekend{color:#e24b4a;}
-.entry-chip{font-size:11px;padding:2px 6px;border-radius:4px;margin-bottom:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;line-height:1.4;}
-.blank-cell{min-height:96px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);border:1.5px solid #cccccc;opacity:0.5;}
-.panel-entry{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;margin-bottom:8px;border:0.5px solid var(--color-border-tertiary);}
-.panel-entry .ename{font-size:12px;font-weight:500;margin-bottom:4px;}
-.panel-entry .etext{font-size:13px;color:var(--color-text-primary);white-space:pre-wrap;word-break:break-word;}
-.panel-entry .etime{font-size:10px;color:var(--color-text-tertiary);margin-top:4px;}
-.title-wrap{text-align:center;padding:0.5rem 0 0.25rem;}
-.animated-title{display:inline-block;font-size:26px;font-weight:500;color:var(--color-text-primary);line-height:1.3;}
-.animated-title span{display:inline-block;animation:waveLetter 2s ease-in-out infinite;}
-@keyframes waveLetter{0%,100%{transform:translateY(0);}40%{transform:translateY(-6px);}60%{transform:translateY(-3px);}}
-</style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #f5f5f3; color: #1a1a1a; }
+  button { cursor: pointer; background: #fff; border: 1px solid #aaa; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-family: inherit; transition: background 0.15s; }
+  button:hover { background: #f0f0f0; }
+  input, textarea { font-family: inherit; border: 1px solid #aaa; border-radius: 8px; padding: 8px 10px; font-size: 14px; outline: none; transition: border 0.15s; }
+  input:focus, textarea:focus { border-color: #555; }
 
-<div id="name-screen" style="min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:2.5rem 1rem;text-align:center;">
-  <div style="font-size:42px;line-height:1;">📅</div>
-  <div class="title-wrap"><p class="animated-title" id="animated-title"></p></div>
-  <p style="font-size:15px;color:var(--color-text-secondary);margin:0;line-height:1.6;">이름을 입력하면 선생님별로 일정이 구분돼 표시됩니다.<br>같은 날짜에 여러 선생님이 함께 작성할 수 있어요.</p>
-  <div style="display:flex;gap:8px;margin-top:4px;">
-    <input id="name-input" type="text" placeholder="예: 린하 선생님" style="width:190px;font-size:14px;" maxlength="20"/>
+  #name-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 2rem 1rem; text-align: center; }
+  .title-emoji { font-size: 48px; line-height: 1; }
+  .animated-title { display: inline-block; font-size: 28px; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
+  .animated-title span { display: inline-block; animation: waveLetter 2s ease-in-out infinite; }
+  @keyframes waveLetter { 0%,100%{transform:translateY(0);} 40%{transform:translateY(-7px);} 60%{transform:translateY(-3px);} }
+  .subtitle { font-size: 15px; color: #666; line-height: 1.7; }
+  .name-row { display: flex; gap: 8px; margin-top: 6px; }
+  .name-row input { width: 200px; }
+  #name-err { font-size: 12px; color: #e24b4a; display: none; }
+
+  #main { display: none; max-width: 900px; margin: 0 auto; padding: 1rem; }
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+  .top-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .month-tabs { display: flex; gap: 5px; flex-wrap: wrap; }
+  .month-tabs button { font-size: 13px; min-width: 52px; padding: 5px 10px; }
+  .month-tabs button.active { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+  .name-badge { font-size: 12px; padding: 4px 12px; border-radius: 20px; background: #fff; border: 1px solid #ccc; color: #555; cursor: pointer; }
+  .sync-status { font-size: 11px; color: #999; }
+
+  .cal-wrap { background: #fff; border-radius: 12px; border: 1px solid #ddd; overflow: hidden; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .dow-hd { text-align: center; font-size: 12px; font-weight: 600; padding: 8px 0; background: #f8f8f6; border-bottom: 1px solid #e0e0e0; }
+  .dow-hd.weekend { color: #e24b4a; }
+  .day-cell { min-height: 100px; background: #fff; border: 1px solid #ddd; padding: 7px 8px; cursor: pointer; transition: background 0.1s; }
+  .day-cell:hover { background: #f9f9f7; }
+  .day-cell.sel { background: #eff6ff !important; border-color: #93c5fd; }
+  .day-cell.today { border-color: #e24b4a; border-width: 2px; }
+  .day-cell.today .dnum { background: #fde8e8; color: #e24b4a; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
+  .blank-cell { min-height: 100px; background: #fafafa; border: 1px solid #e8e8e8; }
+  .dnum { font-size: 13px; font-weight: 600; margin-bottom: 5px; line-height: 1.2; color: #1a1a1a; }
+  .dnum.weekend { color: #e24b4a; }
+  .entry-chip { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-bottom: 3px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; display: block; line-height: 1.5; }
+
+  #edit-panel { display: none; margin-top: 16px; background: #fff; border-radius: 12px; border: 1px solid #ccc; padding: 1.25rem 1.5rem; }
+  .panel-date { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+  .panel-entry { background: #f8f8f6; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid #e8e8e8; }
+  .panel-entry .ename { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .panel-entry .etext { font-size: 13px; white-space: pre-wrap; word-break: break-word; }
+  .panel-entry .etime { font-size: 10px; color: #999; margin-top: 4px; }
+  .my-write-label { font-size: 12px; font-weight: 600; color: #555; margin: 0 0 8px; }
+  .panel-btns { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .no-entry { font-size: 12px; color: #aaa; margin: 0 0 12px; }
+  .divider { border: none; border-top: 1px solid #e0e0e0; margin: 12px 0; }
+</style>
+</head>
+<body>
+
+<!-- 이름 입력 화면 -->
+<div id="name-screen">
+  <div class="title-emoji">📅</div>
+  <div><p class="animated-title" id="animated-title"></p></div>
+  <p class="subtitle">이름을 입력하면 선생님별로 일정이 구분돼 표시됩니다.<br>같은 날짜에 여러 선생님이 함께 작성할 수 있어요.</p>
+  <div class="name-row">
+    <input id="name-input" type="text" placeholder="예: 린하 선생님" maxlength="20"/>
     <button onclick="setName()">시작하기 →</button>
   </div>
-  <p id="name-err" style="font-size:12px;color:var(--color-text-danger);margin:0;display:none;">이름을 입력해 주세요.</p>
+  <p id="name-err">이름을 입력해 주세요.</p>
 </div>
 
-<div id="main" style="display:none;padding:0.75rem 0;">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.875rem;flex-wrap:wrap;gap:8px;">
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <button onclick="goHome()" style="font-size:12px;padding:5px 12px;display:flex;align-items:center;gap:5px;">
-        <i class="ti ti-home" aria-hidden="true" style="font-size:14px;"></i> 홈
-      </button>
-      <div id="month-tabs" style="display:flex;gap:5px;flex-wrap:wrap;"></div>
+<!-- 메인 달력 -->
+<div id="main">
+  <div class="top-bar">
+    <div class="top-left">
+      <button onclick="goHome()" style="display:flex;align-items:center;gap:5px;">🏠 홈</button>
+      <div class="month-tabs" id="month-tabs"></div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
-      <span id="sync-status" style="font-size:11px;color:var(--color-text-tertiary);"></span>
-      <span style="font-size:12px;padding:3px 10px;border-radius:20px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);cursor:pointer;" onclick="changeName()">✏️ <span id="my-name-label"></span></span>
+      <span class="sync-status" id="sync-status"></span>
+      <span class="name-badge" onclick="changeName()">✏️ <span id="my-name-label"></span></span>
     </div>
   </div>
-  <div id="dow-row" class="cal-grid" style="margin-bottom:2px;"></div>
-  <div id="cal-body" class="cal-grid"></div>
-
-  <div id="edit-panel" style="display:none;margin-top:1.25rem;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:1px solid #aaaaaa;padding:1.25rem 1.5rem;">
-    <p id="panel-date-label" style="font-size:15px;font-weight:500;margin:0 0 14px;color:var(--color-text-primary);"></p>
+  <div class="cal-wrap">
+    <div class="cal-grid" id="dow-row"></div>
+    <div class="cal-grid" id="cal-body"></div>
+  </div>
+  <div id="edit-panel">
+    <p class="panel-date" id="panel-date-label"></p>
     <div id="others-entries"></div>
-    <div style="border-top:1px solid #cccccc;padding-top:14px;margin-top:4px;">
-      <p style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin:0 0 8px;">내 일정 작성</p>
-      <textarea id="note-input" rows="4" style="width:100%;box-sizing:border-box;font-size:13px;resize:vertical;" placeholder="일정 또는 메모를 입력하세요..."></textarea>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-        <button id="save-btn" onclick="saveNote()">저장</button>
-        <button onclick="deleteNote()">내 일정 삭제</button>
-        <button onclick="closePanel()" style="margin-left:auto;">닫기</button>
-      </div>
+    <hr class="divider">
+    <p class="my-write-label">내 일정 작성</p>
+    <textarea id="note-input" rows="4" style="width:100%;resize:vertical;" placeholder="일정 또는 메모를 입력하세요..."></textarea>
+    <div class="panel-btns">
+      <button id="save-btn" onclick="saveNote()">저장</button>
+      <button onclick="deleteNote()">내 일정 삭제</button>
+      <button onclick="closePanel()" style="margin-left:auto;">닫기</button>
     </div>
   </div>
 </div>
 
+<!-- ✅ Firebase SDK를 먼저 불러오고 defer로 실행 순서 보장 -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-const MONTHS=[{y:2026,m:5,name:'5월',sd:20},{y:2026,m:6,name:'6월',sd:1},{y:2026,m:7,name:'7월',sd:1},{y:2026,m:8,name:'8월',sd:1},{y:2026,m:9,name:'9월',sd:1},{y:2026,m:10,name:'10월',sd:1},{y:2026,m:11,name:'11월',sd:1},{y:2026,m:12,name:'12월',sd:1}];
-const DOWS=['일','월','화','수','목','금','토'];
-const COLORS=['#1D9E75','#185FA5','#993C1D','#7F77DD','#BA7517','#993556','#3B6D11','#633806'];
-const BGS=[['#E1F5EE','#085041'],['#E6F1FB','#0C447C'],['#FAECE7','#712B13'],['#EEEDFE','#3C3489'],['#FAEEDA','#633806'],['#FBEAF0','#72243E'],['#EAF3DE','#27500A'],['#FAEEDA','#412402']];
-function nameColor(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%COLORS.length;return COLORS[h];}
-function nameBg(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%BGS.length;return BGS[h];}
+// ✅ Firebase 초기화
+const firebaseConfig = {
+  apiKey: "AIzaSyDiij02XA08gPlyOu7nyU3fujxAtUwHwM0",
+  authDomain: "school-schedule-2026.firebaseapp.com",
+  databaseURL: "https://school-schedule-2026-default-rtdb.firebaseio.com",
+  projectId: "school-schedule-2026",
+  storageBucket: "school-schedule-2026.firebasestorage.app",
+  messagingSenderId: "993362412815",
+  appId: "1:993362412815:web:30dd1c11c2ead54b332a7a",
+  measurementId: "G-Q4VT4533QT"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-const titleText='선생님 공유 일정표';
-const titleEl=document.getElementById('animated-title');
-titleEl.innerHTML=[...titleText].map((ch,i)=>{
-  const delay=(i*0.1).toFixed(1);
-  return ch===' '?'<span style="display:inline-block;width:8px;"> </span>':`<span style="animation-delay:${delay}s">${ch}</span>`;
-}).join('');
+// ✅ 앱 시작
+window.addEventListener('DOMContentLoaded', function() {
 
-let myName='',curIdx=0,selKey=null,allNotes={};
-const today=new Date();
-let syncTimer=null;
+  const MONTHS=[{y:2026,m:5,name:'5월',sd:20},{y:2026,m:6,name:'6월',sd:1},{y:2026,m:7,name:'7월',sd:1},{y:2026,m:8,name:'8월',sd:1},{y:2026,m:9,name:'9월',sd:1},{y:2026,m:10,name:'10월',sd:1},{y:2026,m:11,name:'11월',sd:1},{y:2026,m:12,name:'12월',sd:1}];
+  const DOWS=['일','월','화','수','목','금','토'];
+  const COLORS=['#1D9E75','#185FA5','#993C1D','#7F77DD','#BA7517','#993556','#3B6D11','#633806'];
+  const BGS=[['#E1F5EE','#085041'],['#E6F1FB','#0C447C'],['#FAECE7','#712B13'],['#EEEDFE','#3C3489'],['#FAEEDA','#633806'],['#FBEAF0','#72243E'],['#EAF3DE','#27500A'],['#FAEEDA','#412402']];
+  function nameColor(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%COLORS.length;return COLORS[h];}
+  function nameBg(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%BGS.length;return BGS[h];}
+  function isWeekend(d){return d===0||d===6;}
 
-function dk(y,m,d){return`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
-function daysInMonth(y,m){return new Date(y,m,0).getDate();}
-function fmtTime(ts){const d=new Date(ts);return`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;}
-function isWeekend(dow){return dow===0||dow===6;}
+  // 타이틀 애니메이션
+  const titleText='선생님 공유 일정표';
+  document.getElementById('animated-title').innerHTML=[...titleText].map((ch,i)=>{
+    const delay=(i*0.1).toFixed(1);
+    return ch===' '?'<span style="display:inline-block;width:8px"> </span>'
+      :`<span style="animation-delay:${delay}s">${ch}</span>`;
+  }).join('');
 
-async function loadNotes(){
-  try{const r=await window.storage.get('shared_schedule_2026_v2',true);if(r)allNotes=JSON.parse(r.value);document.getElementById('sync-status').textContent='동기화: '+fmtTime(Date.now());}catch(e){}
-}
-async function saveNotes(){try{await window.storage.set('shared_schedule_2026_v2',JSON.stringify(allNotes),true);}catch(e){}}
+  let myName='', curIdx=0, selKey=null, allNotes={};
+  const today=new Date();
 
-function goHome(){
-  closePanel(true);
-  if(syncTimer)clearInterval(syncTimer);
-  document.getElementById('main').style.display='none';
-  document.getElementById('name-screen').style.display='flex';
-  document.getElementById('name-input').value=myName;
-}
+  function dk(y,m,d){return`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+  function daysInMonth(y,m){return new Date(y,m,0).getDate();}
+  function fmtTime(ts){const d=new Date(ts);return`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;}
 
-async function setName(){
-  const v=document.getElementById('name-input').value.trim();
-  if(!v){document.getElementById('name-err').style.display='block';return;}
-  myName=v;
-  try{await window.storage.set('my_sched_name_2026',v);}catch(e){}
-  await loadNotes();
-  document.getElementById('name-screen').style.display='none';
-  document.getElementById('main').style.display='block';
-  document.getElementById('my-name-label').textContent=myName;
-  renderTabs();renderCal();
-  if(syncTimer)clearInterval(syncTimer);
-  syncTimer=setInterval(async()=>{await loadNotes();renderCal();},30000);
-}
-
-function changeName(){
-  const n=prompt('새 이름을 입력하세요:',myName);
-  if(n&&n.trim()){myName=n.trim();window.storage.set('my_sched_name_2026',myName);document.getElementById('my-name-label').textContent=myName;renderCal();}
-}
-
-function renderTabs(){
-  const el=document.getElementById('month-tabs');el.innerHTML='';
-  MONTHS.forEach((m,i)=>{
-    const b=document.createElement('button');b.textContent=m.name;
-    if(i===curIdx)b.classList.add('active');
-    b.onclick=()=>{curIdx=i;selKey=null;closePanel(true);renderTabs();renderCal();};
-    el.appendChild(b);
+  // 실시간 데이터 구독
+  db.ref('schedule2026').on('value', snap=>{
+    allNotes=snap.val()||{};
+    document.getElementById('sync-status').textContent='동기화: '+fmtTime(Date.now());
+    if(document.getElementById('main').style.display==='block') renderCal();
   });
-}
 
-function renderCal(){
-  const{y,m,sd}=MONTHS[curIdx];
-  const ed=daysInMonth(y,m);
-  const firstDow=new Date(y,m-1,sd).getDay();
-  document.getElementById('dow-row').innerHTML=DOWS.map((d,i)=>
-    `<div class="dow-hd${isWeekend(i)?' weekend':''}">${d}</div>`
-  ).join('');
-  const grid=document.getElementById('cal-body');grid.innerHTML='';
-  for(let i=0;i<firstDow;i++){const b=document.createElement('div');b.className='blank-cell';grid.appendChild(b);}
-  for(let d=sd;d<=ed;d++){
-    const key=dk(y,m,d);
-    const entries=allNotes[key]||[];
-    const dow=new Date(y,m-1,d).getDay();
-    const isToday=today.getFullYear()===y&&today.getMonth()===m-1&&today.getDate()===d;
-    const isSel=key===selKey;
-    const cell=document.createElement('div');
-    cell.className='day-cell'+(isSel?' sel':'')+(isToday?' today':'');
-    let chips='';
-    entries.slice(0,3).forEach(e=>{const[bg,fg]=nameBg(e.name);chips+=`<span class="entry-chip" style="background:${bg};color:${fg};">${e.name.length>5?e.name.slice(0,5)+'…':e.name}: ${e.text.split('\n')[0].slice(0,12)}</span>`;});
-    if(entries.length>3)chips+=`<span style="font-size:11px;color:var(--color-text-tertiary);padding:1px 0;">+${entries.length-3}명 더</span>`;
-    const numClass='dnum'+(isWeekend(dow)?' weekend':'');
-    cell.innerHTML=`<div class="${numClass}">${d}</div>${chips||`<div style="font-size:11px;color:#aaaaaa;margin-top:2px;">+</div>`}`;
-    cell.onclick=()=>openPanel(key,y,m,d);
-    grid.appendChild(cell);
+  window.goHome=function(){
+    closePanel(true);
+    document.getElementById('main').style.display='none';
+    document.getElementById('name-screen').style.display='flex';
+    document.getElementById('name-input').value=myName;
+  };
+
+  window.setName=function(){
+    const v=document.getElementById('name-input').value.trim();
+    if(!v){document.getElementById('name-err').style.display='block';return;}
+    myName=v;
+    localStorage.setItem('myName2026',v);
+    document.getElementById('name-screen').style.display='none';
+    document.getElementById('main').style.display='block';
+    document.getElementById('my-name-label').textContent=myName;
+    renderTabs(); renderCal();
+  };
+
+  window.changeName=function(){
+    const n=prompt('새 이름을 입력하세요:',myName);
+    if(n&&n.trim()){myName=n.trim();localStorage.setItem('myName2026',myName);document.getElementById('my-name-label').textContent=myName;renderCal();}
+  };
+
+  function renderTabs(){
+    const el=document.getElementById('month-tabs'); el.innerHTML='';
+    MONTHS.forEach((m,i)=>{
+      const b=document.createElement('button'); b.textContent=m.name;
+      if(i===curIdx) b.classList.add('active');
+      b.onclick=()=>{curIdx=i;selKey=null;closePanel(true);renderTabs();renderCal();};
+      el.appendChild(b);
+    });
   }
-  const total=firstDow+(ed-sd+1);
-  const rem=(7-total%7)%7;
-  for(let i=0;i<rem;i++){const b=document.createElement('div');b.className='blank-cell';grid.appendChild(b);}
-}
 
-function openPanel(key,y,m,d){
-  selKey=key;renderCal();
-  const dow=new Date(y,m-1,d).getDay();
-  document.getElementById('panel-date-label').textContent=`${y}년 ${m}월 ${d}일 (${DOWS[dow]})`;
-  const entries=allNotes[key]||[];
-  const others=entries.filter(e=>e.name!==myName);
-  const mine=entries.find(e=>e.name===myName);
-  const oel=document.getElementById('others-entries');oel.innerHTML='';
-  if(others.length>0){others.forEach(e=>{const div=document.createElement('div');div.className='panel-entry';div.innerHTML=`<div class="ename" style="color:${nameColor(e.name)}">${e.name}</div><div class="etext">${e.text.replace(/</g,'&lt;')}</div><div class="etime">${fmtTime(e.time)}</div>`;oel.appendChild(div);});}
-  else{oel.innerHTML='<p style="font-size:12px;color:var(--color-text-tertiary);margin:0 0 12px;">아직 다른 선생님의 일정이 없습니다.</p>';}
-  document.getElementById('note-input').value=mine?mine.text:'';
-  document.getElementById('edit-panel').style.display='block';
-  document.getElementById('note-input').focus();
-}
+  function renderCal(){
+    const{y,m,sd}=MONTHS[curIdx];
+    const ed=daysInMonth(y,m);
+    const firstDow=new Date(y,m-1,sd).getDay();
+    document.getElementById('dow-row').innerHTML=DOWS.map((d,i)=>
+      `<div class="dow-hd${isWeekend(i)?' weekend':''}">${d}</div>`).join('');
+    const grid=document.getElementById('cal-body'); grid.innerHTML='';
+    for(let i=0;i<firstDow;i++){const b=document.createElement('div');b.className='blank-cell';grid.appendChild(b);}
+    for(let d=sd;d<=ed;d++){
+      const key=dk(y,m,d);
+      const raw=allNotes[key]||[];
+      const entries=Array.isArray(raw)?raw:Object.values(raw);
+      const dow=new Date(y,m-1,d).getDay();
+      const isToday=today.getFullYear()===y&&today.getMonth()===m-1&&today.getDate()===d;
+      const cell=document.createElement('div');
+      cell.className='day-cell'+(key===selKey?' sel':'')+(isToday?' today':'');
+      let chips='';
+      entries.slice(0,3).forEach(e=>{
+        const[bg,fg]=nameBg(e.name);
+        chips+=`<span class="entry-chip" style="background:${bg};color:${fg};">${e.name.length>5?e.name.slice(0,5)+'…':e.name}: ${e.text.split('\n')[0].slice(0,12)}</span>`;
+      });
+      if(entries.length>3) chips+=`<span style="font-size:10px;color:#aaa;">+${entries.length-3}명 더</span>`;
+      cell.innerHTML=`<div class="dnum${isWeekend(dow)?' weekend':''}">${d}</div>${chips||'<div style="font-size:11px;color:#ccc;margin-top:2px">+</div>'}`;
+      cell.onclick=()=>openPanel(key,y,m,d);
+      grid.appendChild(cell);
+    }
+    const total=firstDow+(ed-sd+1);
+    const rem=(7-total%7)%7;
+    for(let i=0;i<rem;i++){const b=document.createElement('div');b.className='blank-cell';grid.appendChild(b);}
+  }
 
-function closePanel(skipRender){selKey=null;document.getElementById('edit-panel').style.display='none';if(!skipRender)renderCal();}
+  function openPanel(key,y,m,d){
+    selKey=key; renderCal();
+    const dow=new Date(y,m-1,d).getDay();
+    document.getElementById('panel-date-label').textContent=`${y}년 ${m}월 ${d}일 (${DOWS[dow]})`;
+    const raw=allNotes[key]||[];
+    const entries=Array.isArray(raw)?raw:Object.values(raw);
+    const others=entries.filter(e=>e.name!==myName);
+    const mine=entries.find(e=>e.name===myName);
+    const oel=document.getElementById('others-entries'); oel.innerHTML='';
+    if(others.length>0){
+      others.forEach(e=>{
+        const div=document.createElement('div'); div.className='panel-entry';
+        div.innerHTML=`<div class="ename" style="color:${nameColor(e.name)}">${e.name}</div><div class="etext">${e.text.replace(/</g,'&lt;')}</div><div class="etime">${fmtTime(e.time)}</div>`;
+        oel.appendChild(div);
+      });
+    } else {
+      oel.innerHTML='<p class="no-entry">아직 다른 선생님의 일정이 없습니다.</p>';
+    }
+    document.getElementById('note-input').value=mine?mine.text:'';
+    document.getElementById('edit-panel').style.display='block';
+    document.getElementById('note-input').focus();
+  }
 
-async function saveNote(){
-  if(!selKey)return;
-  const v=document.getElementById('note-input').value.trim();
-  const entries=(allNotes[selKey]||[]).filter(e=>e.name!==myName);
-  if(v)entries.push({name:myName,text:v,time:Date.now()});
-  if(entries.length>0)allNotes[selKey]=entries;else delete allNotes[selKey];
-  await saveNotes();
-  openPanel(selKey,...selKey.split('-').map(Number));renderCal();
-  const btn=document.getElementById('save-btn');btn.textContent='저장됨 ✓';setTimeout(()=>{btn.textContent='저장';},1200);
-}
+  function closePanel(skipRender){selKey=null;document.getElementById('edit-panel').style.display='none';if(!skipRender)renderCal();}
 
-async function deleteNote(){
-  if(!selKey)return;
-  const entries=(allNotes[selKey]||[]).filter(e=>e.name!==myName);
-  if(entries.length>0)allNotes[selKey]=entries;else delete allNotes[selKey];
-  await saveNotes();openPanel(selKey,...selKey.split('-').map(Number));renderCal();
-}
+  window.saveNote=async function(){
+    if(!selKey)return;
+    const v=document.getElementById('note-input').value.trim();
+    const raw=allNotes[selKey]||[];
+    const entries=(Array.isArray(raw)?raw:Object.values(raw)).filter(e=>e.name!==myName);
+    if(v) entries.push({name:myName,text:v,time:Date.now()});
+    await db.ref('schedule2026/'+selKey).set(entries.length>0?entries:null);
+    const btn=document.getElementById('save-btn');btn.textContent='저장됨 ✓';setTimeout(()=>{btn.textContent='저장';},1200);
+  };
 
-(async()=>{
-  try{const r=await window.storage.get('my_sched_name_2026');if(r&&r.value)document.getElementById('name-input').value=r.value;}catch(e){}
-  document.getElementById('name-input').addEventListener('keydown',e=>{if(e.key==='Enter')setName();});
-})();
+  window.deleteNote=async function(){
+    if(!selKey)return;
+    const raw=allNotes[selKey]||[];
+    const entries=(Array.isArray(raw)?raw:Object.values(raw)).filter(e=>e.name!==myName);
+    await db.ref('schedule2026/'+selKey).set(entries.length>0?entries:null);
+    document.getElementById('note-input').value='';
+  };
+
+  window.closePanel=function(skipRender){closePanel(skipRender);};
+
+  // 저장된 이름 자동 불러오기
+  const savedName=localStorage.getItem('myName2026');
+  if(savedName) document.getElementById('name-input').value=savedName;
+  document.getElementById('name-input').addEventListener('keydown',e=>{if(e.key==='Enter')window.setName();});
+
+}); // DOMContentLoaded 끝
 </script>
+</body>
+</html>
